@@ -1,0 +1,95 @@
+<aspect name="MediationLifeCycle" class="org.wso2.carbon.governance.registry.extensions.aspects.DefaultLifeCycle">
+    <configuration type="literal">
+        <lifecycle>
+            <scxml xmlns="http://www.w3.org/2005/07/scxml"
+                   version="1.0"
+                   initialstate="Design">
+                <state id="Design">
+                    <datamodel>
+                        <data name="checkItems">
+                            <item name="Analysis Done" forEvent="Promote,Retire">
+                            </item>
+                            <item name="Design Documents Created" forEvent="Promote">
+                            </item>
+                            <item name="Design Review Completed" forEvent="Promote">
+                            </item>
+                        </data>                        <data name="transitionExecution">
+                        <execution forEvent="Promote"
+                                   class="org.wso2.carbon.governance.registry.extensions.executors.WSExecutor">
+                            <parameter name="async" value="true"/>
+                            <parameter name="epr"
+                                       value="http://localhost:9765/services/MediationApprovalWorkFlowProcess"/>
+                            <parameter name="payload">
+                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                                                  xmlns:axis="http://ws.apache.org/axis2">
+                                    <soapenv:Header/>
+                                    <soapenv:Body>
+                                        <wor:MediationApprovalWorkFlowProcessRequest
+                                                xmlns:wor="http://workflow.demo.pre.wso2.org">
+                                            <wor:mediationName>{@overview_name}</wor:mediationName>
+                                            <wor:version>{@overview_version}</wor:version>
+                                            <wor:direction>{@definition_direction}</wor:direction>
+                                            <wor:project>{@projectDetails_projectName}</wor:project>
+                                            <wor:correlationID>{@overview_name}_{@overview_version}_{@definition_direction}_{@projectDetails_projectName}</wor:correlationID>
+                                        </wor:MediationApprovalWorkFlowProcessRequest>
+                                    </soapenv:Body>
+                                </soapenv:Envelope>
+                            </parameter>
+                        </execution>
+                    </data>
+
+                    </datamodel>
+                    <transition event="Promote" target="WaitingForApproval"/>
+                    <transition event="Retire" target="Retired"/>
+                </state>
+                <state id="WaitingForApproval">
+
+                    <transition event="Promote" target="Development"/>
+                    <transition event="Disapprove" target="Disapproved"/>
+                </state>
+                <state id="Disapproved">
+                    <transition event="Design" target="Design"/>
+                    <transition event="Retire" target="Retired"/>
+                </state>
+                <state id="Development">
+                    <datamodel>
+                        <data name="checkItems">
+                            <item name="Code Completed" forEvent="Promote">
+                            </item>
+                            <item name="Code Review Completed" forEvent="Promote">
+                            </item>
+                            <item name="Testing Completed" forEvent="Promote">
+                            </item>
+                        </data>
+                    </datamodel>
+                    <transition event="Promote" target="Testing"/>
+                    <transition event="Demote" target="Design"/>
+                    <transition event="Retire" target="Retired"/>
+                </state>
+                <state id="Testing">
+                    <datamodel>
+                        <data name="checkItems">
+                            <item name="Smoke Test Passed" forEvent="Promote">
+                            </item>
+                            <item name="Test Cases Passed" forEvent="Promote">
+                            </item>
+                        </data>
+                    </datamodel>
+                    <transition event="Promote" target="Production"/>
+                    <transition event="Demote" target="Development"/>
+                    <transition event="Retire" target="Retired"/>
+                </state>
+                <state id="Production">
+                    <transition event="Retire" target="Retired"/>
+                </state>
+                <state id="Retired">
+                </state>
+            </scxml>
+        </lifecycle>
+    </configuration>
+</aspect>
+
+
+
+
+

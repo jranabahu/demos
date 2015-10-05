@@ -1,0 +1,74 @@
+<artifactType type="application/vnd.wso2-mediation+xml" shortName="mediations" singularLabel="Mediation" pluralLabel="Mediations" hasNamespace="false" iconSet="2">
+    <storagePath>/meta/mediations/@{overview_name}/@{overview_version}/@{overview_name}</storagePath>
+    <nameAttribute>overview_name</nameAttribute>
+    <lifecycle>MediationLifeCycle</lifecycle>
+    <ui>
+        <list>
+            <column name="Name">
+                <data type="path" value="overview_name" href="@{storagePath}"/>
+            </column>
+            <column name="Name">
+                <data type="path" value="overview_version" href="@{storagePath}"/>
+            </column>
+        </list>
+    </ui>
+    <content>
+        <table name="Overview">
+            <field type="text" required="true">
+                <name>Name</name>
+            </field>
+            <field type="text" required="true">
+                <name>Version</name>
+            </field>
+            <field type="text-area">
+                <name>Description</name>
+            </field>
+        </table>
+        <table name="Definition">
+            <field type="text-area">
+                <name>Business Impact</name>
+            </field>
+            <field type="options">
+                <name>Direction</name>
+                <values>
+                    <value>In</value>
+                    <value>Out</value>
+                    <value>Fault</value>
+                </values>
+            </field>
+        </table>
+        <table name="Project Details">
+            <field type="text">
+                <name>Project Name</name>
+            </field>
+            <field type="text">
+                <name>Owner</name>
+            </field>
+        </table>
+        <table name="Relationships">
+            <subheading>
+                <heading>Type</heading>
+                <heading>Resource</heading>
+            </subheading>
+            <field type="option-text" maxoccurs="unbounded" path="true"
+                   startsWith="/_system/governance">
+                <name>Association</name>
+                <values>
+                    <value>Dependency</value>
+                    <value>Association</value>
+                </values>
+            </field>
+        </table>
+        <table name="Documentation" columns="2" maxoccurs="unbounded">
+            <subheading>
+                <heading>URL</heading><heading>Comment</heading>
+            </subheading>
+            <field type="text">
+                <name>URL</name>
+            </field>
+            <field type="text" url="true">
+                <name>Comment</name>
+            </field>
+        </table>
+    </content>
+</artifactType>
